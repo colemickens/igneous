@@ -5,28 +5,36 @@
 
 #![feature(globs)]
 
-extern crate time;
+extern crate serialize;
 extern crate http;
-extern crate rustc;
+extern crate openssl;
 
 pub mod blobstorage {
   use std::io::IoResult;
-  use time;
-  use rustc::util::sha2::Sha256;
-  use rustc::util::sha2::Digest;
+  use std::path::BytesContainer;
+  use serialize::base64::*;
   use http::client::RequestWriter;
-  use http::headers::content_type::*;
+  use http::headers::HeaderConvertible;
   use http::headers::request::ExtensionHeader;
-  use http::method::Post;
-
   use http::headers::test_utils::to_stream_into_str;
-  
-  pub struct BlobStorageConnection {
-    accountName: String
+  use http::method::Post;
+  use openssl::crypto::hash::*;
+  use openssl::crypto::hmac::*;
+
+  pub struct BlobStorageClient {
+    pub accountName: String,
+    pub key: Vec<u8>
   }
-  
-  impl BlobStorageConnection {
-    pub fn newPutBlobRequest(&self, containerName: &str, blobName: &str) -> IoResult<RequestWriter> {
+
+  pub fn extract<T: HeaderConvertible>(element: Option<T>) -> String {
+    match element {
+      None => "".to_str(),
+      Some(ref x) => to_stream_into_str(x)
+    }
+  }
+
+  impl BlobStorageClient {
+    pub fn new_upload_blob_ex_req(&self, containerName: &str, blobName: &str) -> IoResult<RequestWriter> {
       let url = format!("https://{}.blob.core.windows.net/{}/{}", self.accountName, containerName, blobName);
 
       RequestWriter::new(
@@ -35,42 +43,51 @@ pub mod blobstorage {
       )
     }
 
-    pub fn signRequest(&self, rw: &mut RequestWriter) {
-      let bs = || "".to_str();
-      //let ref hdrs = rw.headers;
-      let hdrs = &rw.headers;
+    /*
+    pub fn new_list_blob_ex_req(&self, containerName: &str, blobName: &str) -> IoResult<RequestWriter> {
+      let url = format!("https://{}.blob.core.windows.net/{}/{}", self.accountName, containerName, blobName);
 
-      let strToSign = format!("{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}",
+      RequestWriter::new(
+          Post,
+          from_str(url.as_slice()).expect("Invalid URL :-(")
+      )
+    }
+    */
+
+    pub fn sign_request(&self, rw: &mut RequestWriter) {
+      let hdrs = rw.headers.clone();
+
+      let strToSign = format!("{:s}\n{:s}\n{:s}\n{:s}\n{:s}\n{:s}\n{:s}\n{:s}\n{:s}\n{:s}\n{:s}\n{:s}\n{:s}\n{:s}",
         "POST".to_str(), // TODO(colemickens): fix
-        hdrs.content_encoding.map_or(bs(), |ref ce| ce.clone()),
-        hdrs.content_language.unwrap_or(bs()),
-        hdrs.content_length.unwrap_or(0),
-        hdrs.content_md5.unwrap_or(bs()),
-        hdrs.content_type.map_or(bs(), |ref ct| to_stream_into_str::<MediaType>(ct)),
-        //to_stream_into_str(&hdrs.date.unwrap_or(time::now())),
-        hdrs.date.unwrap_or(time::now()),
-        hdrs.if_modified_since.unwrap_or(time::now()),
-        hdrs.if_match.unwrap_or(bs()),
-        hdrs.if_none_match.unwrap_or(bs()),
-        hdrs.if_unmodified_since.unwrap_or(time::now()),
-        hdrs.range.unwrap_or(bs()),
-        self.canonicalizedHeaders(rw),
-        self.canonicalizedResource(rw),
+        extract(hdrs.content_encoding),
+        extract(hdrs.content_language),
+        extract(hdrs.content_length),
+        extract(hdrs.content_md5),
+        extract(hdrs.content_type),
+        extract(hdrs.date),
+        extract(hdrs.if_modified_since),
+        extract(hdrs.if_match),
+        extract(hdrs.if_none_match),
+        extract(hdrs.if_unmodified_since),
+        extract(hdrs.range),
+        self.canonicalized_headers(rw),
+        self.canonicalized_resource(rw),
       );
 
       let _ = hdrs;
 
-      let mut s2 = Sha256::new();
-      s2.input_str(strToSign.as_slice());
+      let mut hmac = HMAC(SHA256, self.key.container_as_bytes());
+      hmac.update(strToSign.as_bytes());
+      let shared_key = hmac.final().container_as_bytes().to_base64(STANDARD);
 
-      rw.headers.insert(ExtensionHeader("Authorization".to_str(), format!("Shared-Key: {}", s2.result_str())));
+      rw.headers.insert(ExtensionHeader("Authorization".to_str(), format!("Shared-Key: {}", shared_key)));
     }
 
-    pub fn canonicalizedHeaders(&self, rw: &RequestWriter) -> String {
+    pub fn canonicalized_headers(&self, rw: &RequestWriter) -> String {
       "".to_str()
     }
 
-    pub fn canonicalizedResource(&self, rw: &RequestWriter) -> String {
+    pub fn canonicalized_resource(&self, rw: &RequestWriter) -> String {
       "".to_str()
     }
   }

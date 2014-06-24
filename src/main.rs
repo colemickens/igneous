@@ -8,7 +8,7 @@ use http::client::RequestWriter;
 use http::headers::HeaderEnum;
 use azure::blobstorage;
 
-fn printRequest(request: &RequestWriter) {
+fn print_request(request: &RequestWriter) {
     println!("[33;1mRequest[0m");
     println!("[33;1m=======[0m");
     println!("");
@@ -23,12 +23,17 @@ fn printRequest(request: &RequestWriter) {
 }
 
 fn main() {
-    let mut request: RequestWriter = blobstorage::newPutBlobRequest("camlidev", "camlidev-test", "blobby").unwrap();
+    let client = blobstorage::BlobStorageClient{
+        accountName: "camlidev".to_str(),
+        key: vec!(0u8, 1u8, 2u8)
+    };
+
+    let mut request = client.new_upload_blob_ex_req("camlidev-test", "blobby").unwrap();
     
     // put extra headers on
     // sign it, add auth headers
-    blobstorage::signRequest(&mut request);
-    printRequest(&request);
+    client.sign_request(&mut request);
+    print_request(&request);
 
     println!("");
     println!("[33;1mResponse[0m");
