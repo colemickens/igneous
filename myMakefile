@@ -1,0 +1,16 @@
+all: #rust-openssl rust-http
+	(cd src/azure; rustc lib.rs  -L ../../target/x86_64-unknown-linux-gnu/lib  --out-dir ../../target/x86_64-unknown-linux-gnu/lib)
+	(cd src;       rustc main.rs -L    ../target/x86_64-unknown-linux-gnu/lib  --out-dir ../bin/   )
+
+run: all
+	./bin/main
+
+
+rust-openssl:
+	(cd third_party/rust-openssl;   make clean; ./configure; make;)
+
+rust-http:
+	(cd third_party/rust-http;      make clean; ./configure; make)
+
+#capnproto-rust:
+#	(cd third_party/capnproto-rust; make clean; ./configure; make)
