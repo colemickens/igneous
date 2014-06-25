@@ -108,6 +108,10 @@ pub mod blobstorage {
     }
 
     pub fn canonicalized_resource(&self, rw: &RequestWriter) -> String {
+      // TODO(colemickens):
+      // make this map the query params into a vec with the first line
+      // collect() once, then sort & connect with ("\n") (like canoniclized_headers)
+
       let mut res_str = format!("/{:s}{:s}", self.account_name, rw.url.path);
       for &(ref k, ref v) in rw.url.query.iter() {
         let lower_key = k.to_str().into_ascii_lower();
