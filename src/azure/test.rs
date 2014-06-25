@@ -32,13 +32,18 @@ fn test_list_blobs() {
     tm_gmtoff: 0,
     tm_nsec: 0,
   };
+  {
+    // the following block is just stuff to fake it until we get the right signature
+    // aka, I'm too lazy to generate a good signature to check, so I'm using the one known
+    // good one and making my request match it first
 
-  req.method = method::Put;
+    req.method = method::Put;
 
-  req.headers.date = None;
-  req.headers.content_length = Some(0);
-  req.headers.extensions.insert("x-ms-date".to_str(), to_stream_into_str(&req_date));
-
+    req.headers.date = None;
+    req.headers.content_length = Some(0);
+    req.headers.extensions.insert("x-ms-date".to_str(), to_stream_into_str(&req_date));
+  }
+  
   client.sign_request(&mut req);
 
   assert_eq!(req.url.scheme, "https".to_str());
