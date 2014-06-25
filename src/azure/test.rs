@@ -6,26 +6,21 @@ use azure::blobstorage;
 use http::headers::test_utils::to_stream_into_str;
 use http::method;
 
+// example values from here:
+// http://msdn.microsoft.com/en-us/library/azure/hh225339.aspx
+
 #[test]
 fn test_list_blobs() {
-  let client = blobstorage::new_client("sampleAccount", "secretKey");
-  let mut req = client.new_list_blob_req("samplecontainer");
-  
-  /*
-  let mut req_date: time::Tm;
-  req_date.tm_year = 2013-1900;
-  req_date.tm_mon = 10;
-  req_date.tm_mday = 2;
-  req_date.tm_hour = 15;
-  */
-  
+  let client = blobstorage::new_client("myaccount", "SzlFqgzqhfdk594cFoveYqCyvl8v9EESAnOLcTCeBIo31p46rJJRZx/5vU/oY3ZsK/VdFNaVpm6G8YSD2K48Nw==");
+  let mut req = client.new_list_blob_req("mycontainer");
+    
   let req_date = time::Tm{
     tm_sec: 00,
     tm_min: 00,
-    tm_hour: 15,
-    tm_mday: 2,
-    tm_mon: 10,
-    tm_year: 2013-1900, // lolwut
+    tm_hour: 00,
+    tm_mday: 20,
+    tm_mon: 3,
+    tm_year: 2014-1900, // lolwut
     tm_wday: 0,
     tm_yday: 0,
     tm_isdst: 0,
@@ -47,8 +42,8 @@ fn test_list_blobs() {
   client.sign_request(&mut req);
 
   assert_eq!(req.url.scheme, "https".to_str());
-  assert_eq!(req.url.host, "sampleAccount.blob.core.windows.net".to_str())
-  assert_eq!(req.url.path, "/samplecontainer".to_str())
+  assert_eq!(req.url.host, "myaccount.blob.core.windows.net".to_str())
+  assert_eq!(req.url.path, "/mycontainer".to_str())
   // TODO(colemickens): check query strings: { restype=container; comp=list; }
 
   /*
@@ -58,5 +53,5 @@ fn test_list_blobs() {
   );
   */
   assert_eq!(req.headers.extensions.find(&"x-ms-version".to_str()), Some(&"2009-09-19".to_str()))
-  assert_eq!(req.headers.authorization, Some("SharedKey sampleAccount:h0VRxbQipkWe0762ni41UQrKqV5h/j5gMlJDjb0tvys=".to_str()))
+  assert_eq!(req.headers.authorization, Some("SharedKey: myaccount:+AecMf7mGS/AlP0Vw3GIj4YDe51vkrBCZg1bM0mhNTU=".to_str()))
 }

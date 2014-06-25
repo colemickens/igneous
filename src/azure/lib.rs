@@ -22,6 +22,7 @@ pub mod blobstorage {
   use std::ascii::OwnedStrAsciiExt;
   use std::path::BytesContainer;
   use serialize::base64::*;
+  use serialize::base64::FromBase64;
   use time;
 
   pub struct BlobStorageClient {
@@ -36,10 +37,11 @@ pub mod blobstorage {
     }
   }
   
-  pub fn new_client(account_name: &str, key: &str) -> BlobStorageClient{
+  pub fn new_client(account_name: &str, account_key: &str) -> BlobStorageClient {
+    let key = account_key.as_slice().from_base64().unwrap();
     BlobStorageClient{
       account_name: account_name.to_str(),
-      key: key.to_str().into_bytes() // TODO(review): cant be the best way
+      key: key // TODO(review): cant be the best way
     }
   }
   
@@ -82,7 +84,7 @@ pub mod blobstorage {
 
       let _ = hdrs;
 
-      let mut hmac = HMAC(SHA256, self.key.as_slice());
+      let mut hmac = HMAC(SHA256, self.key.container_as_bytes());
       hmac.update(strToSign.as_bytes());
       let shared_key = hmac.final().as_slice().to_base64(STANDARD);
 
