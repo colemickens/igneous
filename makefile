@@ -6,7 +6,7 @@ test: all
 	(cd src/azure; rustc test.rs -L ../../target/x86_64-unknown-linux-gnu/lib  --test  -o ../../bin/azure_test)
 
 run: all
-	./bin/main
+	./bin/igneous
 
 runtest: test
 	./bin/azure_test

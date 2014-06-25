@@ -41,7 +41,7 @@ pub mod blobstorage {
     let key = account_key.as_slice().from_base64().unwrap();
     BlobStorageClient{
       account_name: account_name.to_str(),
-      key: key // TODO(review): cant be the best way
+      key: key
     }
   }
   
@@ -88,7 +88,7 @@ pub mod blobstorage {
       hmac.update(strToSign.as_bytes());
       let shared_key = hmac.final().as_slice().to_base64(STANDARD);
 
-      rw.headers.authorization = Some(format!("SharedKey: {:s}:{:s}", self.account_name, shared_key));
+      rw.headers.authorization = Some(format!("SharedKey {:s}:{:s}", self.account_name, shared_key));
     }
 
     pub fn canonicalized_headers(&self, rw: &RequestWriter) -> String {
@@ -108,8 +108,7 @@ pub mod blobstorage {
     }
 
     pub fn canonicalized_resource(&self, rw: &RequestWriter) -> String {
-      // TODO(colemickens): fmt specifier
-      let mut res_str = format!("/{:s}{}", self.account_name, rw.url.path);
+      let mut res_str = format!("/{:s}{:s}", self.account_name, rw.url.path);
       for &(ref k, ref v) in rw.url.query.iter() {
         let lower_key = k.to_str().into_ascii_lower();
         res_str = res_str.append(

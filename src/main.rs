@@ -23,12 +23,10 @@ fn print_request(request: &RequestWriter) {
 }
 
 fn main() {
-    let client = blobstorage::BlobStorageClient{
-        account_name: "camlidev".to_str(),
-        key: vec!(0u8, 1u8, 2u8)
-    };
+    // Please don't be mean...
+    let client = blobstorage::new_client("camlidev", "M5tC8FlOa5zxXPKngv57BUU82cg72t67Bznoq2PDowAm/EtoU+QJn0HcJHSzkqL6Iw06ulOa2rKaG+Fzy/b1ow==");
 
-    let mut request = client.new_list_blob_req("camlidev-test");
+    let mut request = client.new_list_blob_req("camlidev-test-1");
     
     // put extra headers on
     // sign it, add auth headers

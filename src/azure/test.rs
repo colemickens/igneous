@@ -53,5 +53,5 @@ fn test_list_blobs() {
   );
   */
   assert_eq!(req.headers.extensions.find(&"x-ms-version".to_str()), Some(&"2009-09-19".to_str()))
-  assert_eq!(req.headers.authorization, Some("SharedKey: myaccount:+AecMf7mGS/AlP0Vw3GIj4YDe51vkrBCZg1bM0mhNTU=".to_str()))
+  assert_eq!(req.headers.authorization, Some("SharedKey myaccount:+AecMf7mGS/AlP0Vw3GIj4YDe51vkrBCZg1bM0mhNTU=".to_str()))
 }
