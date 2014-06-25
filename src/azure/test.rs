@@ -32,6 +32,8 @@ fn test_list_blobs() {
     // aka, I'm too lazy to generate a good signature to check, so I'm using the one known
     // good one and making my request match it first
 
+    // TODO(colemick): Fix this now that we know we're signing correctly.
+    // Ensure the date strat is okay throughout
     req.method = method::Put;
 
     req.headers.date = None;
@@ -46,12 +48,15 @@ fn test_list_blobs() {
   assert_eq!(req.url.path, "/mycontainer".to_str())
   // TODO(colemickens): check query strings: { restype=container; comp=list; }
 
-  /*
+  //assert_eq!(
+  //  to_stream_into_str(&req.headers.date.expect("failed to get date")),
+  //  "Sun, 20 Apr 2014 00:00:00 GMT".to_str()
+  //);
+  
   assert_eq!(
-    to_stream_into_str(&req.headers.date.expect("failed to get date")),
-    "Sat, 02 Nov 2013 15:00:00 GMT".to_str()
+    req.headers.extensions.find(&"x-ms-date".to_str()).expect("failed to get date"),
+    &"Sun, 20 Apr 2014 00:00:00 GMT".to_str()
   );
-  */
   assert_eq!(req.headers.extensions.find(&"x-ms-version".to_str()), Some(&"2009-09-19".to_str()))
   assert_eq!(req.headers.authorization, Some("SharedKey myaccount:+AecMf7mGS/AlP0Vw3GIj4YDe51vkrBCZg1bM0mhNTU=".to_str()))
 }
