@@ -11,9 +11,8 @@
 *.dummy
 *.exe
 *-test
-/bin/main
-/bin/test-internal
-/bin/test-external
+/bin/igneous
+/bin/azure_test
 /doc/
 /target/
 /build/
