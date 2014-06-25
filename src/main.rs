@@ -24,11 +24,11 @@ fn print_request(request: &RequestWriter) {
 
 fn main() {
     let client = blobstorage::BlobStorageClient{
-        accountName: "camlidev".to_str(),
+        account_name: "camlidev".to_str(),
         key: vec!(0u8, 1u8, 2u8)
     };
 
-    let mut request = client.new_upload_blob_ex_req("camlidev-test", "blobby").unwrap();
+    let mut request = client.new_list_blob_req("camlidev-test");
     
     // put extra headers on
     // sign it, add auth headers
