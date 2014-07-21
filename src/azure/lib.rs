@@ -1,8 +1,3 @@
-#![crate_id = "azure#0"]
-#![desc = "Azure BlobStorage"]
-#![license = "BSD"]
-#![crate_type = "lib"]
-
 #![feature(globs)]
 
 extern crate serialize;
@@ -32,7 +27,7 @@ pub mod blobstorage {
 
   pub fn extract<T: HeaderConvertible>(element: Option<T>) -> String {
     match element {
-      None => "".to_str(),
+      None => "".to_string(),
       Some(ref x) => to_stream_into_str(x)
     }
   }
@@ -40,7 +35,7 @@ pub mod blobstorage {
   pub fn new_client(account_name: &str, account_key: &str) -> BlobStorageClient {
     let key = account_key.as_slice().from_base64().unwrap();
     BlobStorageClient{
-      account_name: account_name.to_str(),
+      account_name: account_name.to_string(),
       key: key
     }
   }
@@ -56,7 +51,7 @@ pub mod blobstorage {
 
       // TODO(colemick): this is common to all reqs, extract
       rw.headers.date = Some(time::now_utc());
-      rw.headers.extensions.insert("x-ms-version".to_str(), "2009-09-19".to_str());
+      rw.headers.extensions.insert("x-ms-version".to_string(), "2009-09-19".to_string());
       rw
     }
 
@@ -64,7 +59,7 @@ pub mod blobstorage {
       let hdrs = rw.headers.clone();
 
       let strToSign = format!("{:s}\n{:s}\n{:s}\n{:s}\n{:s}\n{:s}\n{:s}\n{:s}\n{:s}\n{:s}\n{:s}\n{:s}\n{:s}\n{:s}",
-        rw.method.to_str(),
+        rw.method.to_string(),
         extract(hdrs.content_encoding),
         extract(hdrs.content_language),
         extract(hdrs.content_length),
@@ -112,25 +107,14 @@ pub mod blobstorage {
       // make this map the query params into a vec with the first line
       // collect() once, then sort & connect with ("\n") (like canoniclized_headers)
 
-      let mut res_str = format!("/{:s}{:s}", self.account_name, rw.url.path);
-      for &(ref k, ref v) in rw.url.query.iter() {
-        let lower_key = k.to_str().into_ascii_lower();
+      let mut res_str = format!("/{:s}{:s}", self.account_name, rw.url.path.path);
+      for &(ref k, ref v) in rw.url.path.query.iter() {
+        let lower_key = k.to_string().into_ascii_lower();
         res_str = res_str.append(
-          format!("\n{:s}:{:s}", lower_key, v.to_str()).as_slice()
+          format!("\n{:s}:{:s}", lower_key, v.to_string()).as_slice()
         );
       }
 
-      /*
-        TODO(review):
-        If I use the following, instead of the line that actually appears:
-          let mut lines = res_str.as_slice().split('\n').collect();
-
-        Then I get:
-          lib.rs:100:7: 100:19 error: the type of this value must be known in this context
-          lib.rs:100       lines.sort();
-                           ^~~~~~~~~~~~
-          error: aborting due to previous error
-      */
       let mut lines: Vec<&str> = res_str.as_slice().split('\n').collect();
       lines.sort();
       lines.connect("\n")

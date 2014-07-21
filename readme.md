@@ -1,34 +1,60 @@
-Igneous
-=======
+# Igneous
 
 Currently houses a crude attempt at an Azure Blob Storage client.
 
-
-You'll need to get a copy of rust-http and rust-openssl into the third_party/ directory. This will do it:
-
-```shell
-make prepare
-```
-
-
-To run tests cleanly:
+## Building
 
 ```shell
-make clean
-make deps
-make runtest
+git clone https://github.com/colemickens/igneous
+cargo build
 ```
 
-
-To run the example app cleanly:
+## Running
 
 ```shell
-make clean
-make deps
-make run
+./bin/igneous
 ```
 
-This is the current output:
+## Testing
+
+``shell
+cargo test
+```
+
+## Current Output
+
+(I don't understand why this isn't giving the same http ver error though)
+
+```
+Request
+=======
+
+URL: https://camlidev.blob.core.windows.net/camlidev-test-1?restype=container
+Remote address: Some(23.99.32.78:443)
+Method: GET
+Headers:
+ - Date: Mon, 21 Jul 2014 08:50:31 GMT
+ - Authorization: SharedKey camlidev:LoKKnXaH1WapaTeIzt9tmPlHkXYwniUZhrpuIkqkCMg=
+ - Host: camlidev.blob.core.windows.net
+ - x-ms-version: 2009-09-19
+
+Response
+========
+
+Bad header encountered. TODO: handle this better.
+Status: 200 OK
+Headers:
+ - Date: Mon, 21 Jul 2014 08:50:30 GMT
+ - Transfer-Encoding: chunked
+ - Server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+ - Last-Modified: Sun, 08 Jun 2014 00:16:03 GMT
+ - X-Ms-Request-Id: 30e6712d-7e86-40d3-9c8b-4095f0e792de
+ - X-Ms-Version: 2009-09-19
+Body:
+^C
+```
+
+## Old-ish Output
 
 ```
 Request

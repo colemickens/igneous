@@ -1,0 +1,26 @@
+[package]
+
+name = "igneous"
+version = "0.0.0"
+authors = [ "cole.mickens@gmail.com" ]
+
+
+[[lib]]
+
+name = "azure"
+path = "src/azure/lib.rs"
+
+[[bin]]
+
+name = "igneous"
+path = "src/bin/main.rs"
+
+
+[dependencies.capnp]
+
+git = "https://github.com/dwrensha/capnproto-rust.git"
+
+
+[dependencies.http]
+
+git = "https://github.com/chris-morgan/rust-http.git"

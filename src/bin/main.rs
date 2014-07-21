@@ -12,7 +12,7 @@ fn print_request(request: &RequestWriter) {
     println!("[33;1mRequest[0m");
     println!("[33;1m=======[0m");
     println!("");
-    println!("[1mURL:[0m {}", request.url.to_str());
+    println!("[1mURL:[0m {}", request.url.to_string());
     println!("[1mRemote address:[0m {}", request.remote_addr);
     println!("[1mMethod:[0m {}", request.method);
     println!("[1mHeaders:[0m");
