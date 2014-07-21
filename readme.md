@@ -4,6 +4,8 @@ Currently houses a crude attempt at an Azure Blob Storage client.
 
 ## Building
 
+(Uses [cargo](http://crates.io).)
+
 ```shell
 git clone https://github.com/colemickens/igneous
 cargo build
