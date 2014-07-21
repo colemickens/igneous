@@ -17,7 +17,7 @@ cargo build
 
 ## Testing
 
-``shell
+```shell
 cargo test
 ```
 
