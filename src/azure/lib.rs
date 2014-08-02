@@ -9,7 +9,6 @@ pub mod blobstorage {
   use http::client::RequestWriter;
   use http::headers::HeaderConvertible;
   use http::headers::HeaderEnum;
-  use http::headers::request::ExtensionHeader;
   use http::headers::test_utils::to_stream_into_str;
   use http::method::Get;
   use openssl::crypto::hash::*;
@@ -74,8 +73,6 @@ pub mod blobstorage {
         self.canonicalized_headers(rw),
         self.canonicalized_resource(rw),
       );
-
-      //println!(">>>>>{}<<<<<<", strToSign);
 
       let _ = hdrs;
 
