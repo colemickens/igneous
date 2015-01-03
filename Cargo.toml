@@ -5,18 +5,7 @@ authors = [ "cole.mickens@gmail.com" ]
 
 [[lib]]
 name = "azure"
-path = "src/azure/lib.rs"
-
-[[bin]]
-name = "igneous"
-path = "src/bin/main.rs"
-
-[[bin]]
-name = "dbpg"
-path = "src/dbpg/main.rs"
-
-#[dependencies.capnp]
-#git = "https://github.com/dwrensha/capnproto-rust.git"
+path = "src/lib.rs"
 
 [dependencies.http]
 git = "https://github.com/chris-morgan/rust-http.git"

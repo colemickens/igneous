@@ -1,4 +1,4 @@
-# Igneous
+# rust-azure-blob-storage-client
 
 Currently houses a crude attempt at an Azure Blob Storage client.
 
